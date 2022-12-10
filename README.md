@@ -120,10 +120,6 @@ Log context is key-value pairs:
 * The `process` name.
 * The process `namespace`.
 
-## Mapped Diagnostic Context
-
-Semantic logging has no opinion on this. It is just more key-value pairs.
-
 ## Diagram
 
 ```mermaid
@@ -142,3 +138,11 @@ classDiagram
     }
 
 ```
+
+## Mapped Diagnostic Context
+
+Semantic logging has no opinion on this. It is just more key-value pairs.
+
+## Free-text Search
+
+Free-text may not need to be supported with semantic logs, because they're always structured.
