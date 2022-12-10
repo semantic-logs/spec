@@ -143,6 +143,14 @@ classDiagram
 
 Semantic logging has no opinion on this. It is just more key-value pairs.
 
+## Line Numbers
+
+Logs don't have meaningful line numbers. 
+
+## Indexing
+
+TODO
+
 ## Free-text Search
 
 Free-text may not need to be supported with semantic logs, because they're always structured.
