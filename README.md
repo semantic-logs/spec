@@ -22,7 +22,7 @@ Logs entries are events, but events are not entries.
 
 Today, you'll commonly see three types of logs:
 
-* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`, also know as  `logfmt`. These logs can be parsed into structure only knowing they're structured.
+* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`, also known as `logfmt`. These logs can be parsed into structure only knowing they're structured.
 * **Patterned** each entry is a formatted line of text, e.g. `[2022-12-10T14:15:00Z] [info] Hello world`. These logs cannot be parsed into structure without knowing (a) they are patterned and (b) the pattern. Some patterned logs cannot be parsed into structure.
 * **Free-text** arbitrary text, e.g. `Hello world`. These logs cannot be parsed into structure.
 
@@ -112,15 +112,33 @@ JSON is always more verbose than `logfmt`; 30% in the above example.
 
 ## Log Context
 
-Logs are always created by a process and therefore never created without context, e.g.
+Logs are always created by a process and therefore never created without context:
 
-* The hostname of the process.
-* The PID.
-* The process name.
-* The process namespace.
+Log context is key-value pairs:
 
-If our model, log context is key-value pairs.
+* The `hostname` of the process.
+* The `process` name.
+* The process `namespace`.
 
 ## Mapped Diagnostic Context
 
 Semantic logging has no opinion on this. It is just more key-value pairs.
+
+## Diagram
+
+```mermaid
+classDiagram
+    Context <|-- Entry
+
+    class Context{
+      String hostname
+      String process
+      String namespace 
+    }
+    class Entry{
+      Time time
+      Level level
+      String msg
+    }
+
+```
