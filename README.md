@@ -56,17 +56,17 @@ One of :
 * `info` Informational.
 * `debug` Debugging diagnotics. Typcially no logged in production systems. 
 
-How does this interact with `stdout` and `stderr`:
+How does this interact with `stdout` and `stderr`?
 
 * `stdout` Messages are implied to be at `info` level.
 * `stderr` message are impllied at `error` level.
 
 Non-standard levels:
 
-* `fatal` An error message where the applicatino exits with error status. The same as `error` with error exit status.
+* `fatal` An error message where the applicatino exits with error status. Similar to `error` with error exit status.
 * `warning` Synonym for `warn`.
-* `notice` Synonym for `info`.
-* `trace` Synonym for `debug`. 
+* `notice` Prefer `info`.
+* `trace` Prefer `debug`. 
 
 These synonym result in loss of information, but this is considered an acceptable trade-off for convention.
 
@@ -108,7 +108,7 @@ Printed as key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hell
 
 Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "info", "msg": "Hello world"}`.
 
-JSON is always more verbose than `logfmt`; 30% in the above example.
+JSON is always more verbose than `logfmt`; 30% in the above example. 
 
 ## Log Context
 
