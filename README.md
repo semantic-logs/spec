@@ -22,8 +22,8 @@ Logs entries are events, but events are not entries.
 
 Today, you'll commonly see three types of logs:
 
-* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`, sometimes known as `logfmt`. These logs can be parsed into structure only knowing they're structured.
-* **Patterned** each entry is a formatted line of text, e.g. `[2022-12-10T14:15:00Z] [info] Hello world`. These logs cannot be parsed into structure without knowing (a) they are patterned and (b) the pattern. Some patterned logs cannot be parsed into structure.
+* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=INFO msg="Hello world"`, sometimes known as `logfmt`. These logs can be parsed into structure only knowing they're structured.
+* **Patterned** each entry is a formatted line of text, e.g. `[2022-12-10T14:15:00Z] [INFO] Hello world`. These logs cannot be parsed into structure without knowing (a) they are patterned and (b) the pattern. Some patterned logs cannot be parsed into structure.
 * **Free-text** arbitrary text, e.g. `Hello world`. These logs cannot be parsed into a structured form.
 
 
@@ -78,10 +78,10 @@ Mandatory.
 
 One of:
 
-* `error` The application has encountered an error. These errors should be reported to a human and the human should take action.
-* `warn` A warning. Warning do not need to be raised with a human. 
-* `info` Informational.
-* `debug` Debugging diagnotics. Typcially no logged in production systems. 
+* `ERROR` The application has encountered an error. These errors should be reported to a human and the human should take action.
+* `WARN` A warning. Warning do not need to be raised with a human. 
+* `INFO` Informational.
+* `DEBUG` Debugging diagnotics. Typcially no logged in production systems. 
 
 How does this interact with `stdout` and `stderr`?
 
@@ -90,15 +90,10 @@ How does this interact with `stdout` and `stderr`?
 
 Non-standard levels:
 
-* `fatal` An error message where the application exits with error status. Similar to `error` with error exit status.
-* `warning` Synonym for `warn`.
-* `notice` Prefer `info`.
-* `trace` Prefer `debug`. 
-* `ERROR` synonym for `error`
-* `WARNING` synonym for `warn`
-* `WARN` synonym for `warn`
-* `INFO` synonym for `info`
-* `DEBUG` synonym for `debug`
+* `FATAL` An error message where the application exits with error status. Similar to `error` with error exit status.
+* `WARNING` Synonym for `WARN`.
+* `NOTICE` Prefer `INFO`.
+* `TRACE` Prefer `DEBUG`. 
 
 `severity` is a synonym. 
 
@@ -110,8 +105,8 @@ Human readble text.
 
 Messages should be from a small finite set of options. Messages should not be formatted, because that would allow infinite messages.
 
-* Discouraged: `time=2022-12-10T14:15:00Z level=info msg="Hello harry123"`
-* Encouraged: `time=2022-12-10T14:15:00Z level=info msg="Hello" userid=harry123`
+* Discouraged: `time=2022-12-10T14:15:00Z level=INFO msg="Hello harry123"`
+* Encouraged: `time=2022-12-10T14:15:00Z level=INFO msg="Hello" userid=harry123`
 
 `message` is a synonym.
 
@@ -162,11 +157,11 @@ Optional.
 
 ### `logfmt`
 
-Printed as key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`.
+Printed as key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=INFO msg="Hello world"`.
 
 ### JSON
 
-Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "info", "msg": "Hello world"}`.
+Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "INFO", "msg": "Hello world"}`.
 
 JSON is always more verbose than `logfmt`; 30% in the above example. 
 
