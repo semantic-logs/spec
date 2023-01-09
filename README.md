@@ -22,35 +22,59 @@ Logs entries are events, but events are not entries.
 
 Today, you'll commonly see three types of logs:
 
-* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`, also known as `logfmt`. These logs can be parsed into structure only knowing they're structured.
+* **Structured** each entry is made up of key-value pairs, e.g. `time=2022-12-10T14:15:00Z level=info msg="Hello world"`, sometimes known as `logfmt`. These logs can be parsed into structure only knowing they're structured.
 * **Patterned** each entry is a formatted line of text, e.g. `[2022-12-10T14:15:00Z] [info] Hello world`. These logs cannot be parsed into structure without knowing (a) they are patterned and (b) the pattern. Some patterned logs cannot be parsed into structure.
-* **Free-text** arbitrary text, e.g. `Hello world`. These logs cannot be parsed into structure.
+* **Free-text** arbitrary text, e.g. `Hello world`. These logs cannot be parsed into a structured form.
 
-## Semantic Log Entry
 
-To add semantics, we must define the meaning and type of specific keys.
+```mermaid
+classDiagram
+    Logging <|-- Structured
+    Structured <|-- Semantic
+    Logging <|-- Unstructured
+    Unstructured <|-- Patterned
+    Patterned <|-- FreeText
+    Structured <|.. `logfmt`
+```
 
-Mandatory:
+## Types
 
-* `time` When the log entry was created (RCF339 timestamp). 
-* `level` The severity of the event. `error`, `warn`, `info` or `debug`. 
-* `msg` Human readable message describing the entry.
+- Structured logs output only key-value pairs.
+- Entries are space separated. 
+- Entries are new line terminated
+- Keys or values that contain spaces must be quoted.
+- Keys must be `string` type and should do not contain spaces.
+- Keys maybe grouped. Groups are dot-delimited prefix. E.g. `name.first`.
+- Values that contain new lines must be escaped.
+- Values must be a printable type. 
+  - Primitive types such as `string`, `number`, and `boolean`
+  - `object` where the object has a printing method, e.g `toString()` in Java or `String()` in Go.
+  - `array` where the objects are printable.
+- Values cannot be `null`. It is not possible to differentiant a `string` from `null`.
+- Values that are dates must be in RCF339 format.
+- Values that are durations must be in seconds.
 
-Optional keys:
+## Fields
 
-* `thread` The thread or Coroutine name.
-* `logger` The logger name.
-* `error` The error.
+The different between structured logging and semantic logging is that semantic logging defines the meaning and type of certain keys.
 
-### `time`
+### Core
+
+Core fields exist in the top-level group. Some core fields are mandatory. Only core fields can be mandatory.
+
+#### `time`
+
+When the log entry was created (RCF339 timestamp). 
 
 Log entries are ordered. When two entries are logged at the same `time`, `time` alone is not be enough to show order.
 
 `timestamp` and `ts` are synonyms. 
 
-### `level`
+Mandatory.
 
-One of :
+#### `level`
+
+One of:
 
 * `error` The application has encountered an error. These errors should be reported to a human and the human should take action.
 * `warn` A warning. Warning do not need to be raised with a human. 
@@ -64,53 +88,84 @@ How does this interact with `stdout` and `stderr`?
 
 Non-standard levels:
 
-* `fatal` An error message where the applicatino exits with error status. Similar to `error` with error exit status.
+* `fatal` An error message where the application exits with error status. Similar to `error` with error exit status.
 * `warning` Synonym for `warn`.
 * `notice` Prefer `info`.
 * `trace` Prefer `debug`. 
-
-These synonym result in loss of information, but this is considered an acceptable trade-off for convention.
+* `ERROR` synonym for `error`
+* `WARNING` synonym for `warn`
+* `WARN` synonym for `warn`
+* `INFO` synonym for `info`
+* `DEBUG` synonym for `debug`
 
 `severity` is a synonym. 
 
-### `msg`
+Mandatory.
 
-Human reable text. 
+#### `msg`
+
+Human readble text. 
 
 Messages should be from a small finite set of options. Messages should not be formatted, because that would allow infinite messages.
 
-* Invalid: `time=2022-12-10T14:15:00Z level=info msg="Hello harry123"`
-* Valid: `time=2022-12-10T14:15:00Z level=info msg="Hello" userid=harry123`
+* Discouraged: `time=2022-12-10T14:15:00Z level=info msg="Hello harry123"`
+* Encouraged: `time=2022-12-10T14:15:00Z level=info msg="Hello" userid=harry123`
 
 `message` is a synonym.
 
-### `thread`
+Mandatory.
 
-TODO
+#### `thread`
 
-### `error`
+The thread or Coroutine.
+
+Optional.
+
+#### `error`
 
 It is common for `error` level entries to include the error itself. This allows output of more diagnostics, such as stack traces. In Java this would be a `Throwable` in Go an `error`. 
 
-Stack-traces are typcially multi-line string.s
+Stack-traces are typcially multi-line strings.
 
 `err` is a synonym.
 
-## Extensions
+Optional.
 
+#### `source` & `line`
+
+WIP
+
+* `source` The source file that created the log entry.
+* `line` The number within the source file that created the log entry. Must be an integer.
+
+Optional. Determining source/line can be very expensive unless added using macros at compile time.
+
+#### `logger`
+
+The name of the logger that created the entry.
+
+Optional.
 
 ### Audit
 
+WIP
+
 The source of a request:
 
-* `client_ip` The originating IP.
-* `username` The user name requesting access.
-* `resource` The resource being accessed.
+* `audit.client_ip` The originating IP.
+* `audit.username` The user name requesting access.
+* `audit.resource` The resource being accessed.
+
+Optional.
 
 ### OpenTracing
 
-* `trace_id` The trace ID.
-* `span_id` The span ID.
+WIP
+
+* `trace.trace_id` The trace ID.
+* `trace.span_id` The span ID.
+
+Optional.
 
 ## Encodings
 
@@ -124,9 +179,11 @@ Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "info", 
 
 JSON is always more verbose than `logfmt`; 30% in the above example. 
 
+It may be easier to write parsers and printers for JSON as the JSON libraries are typcially well-tested and will deal with escaping. 
+
 ## Process Context
 
-Logs are always created by a process and therefore never created without context:
+Logs are always created by a process and therefore always created with context:
 
 Log context is key-value pairs:
 
@@ -134,13 +191,11 @@ Log context is key-value pairs:
 * The `process` name.
 * The process `namespace`.
 
-## Diagram
-
 ```mermaid
 classDiagram
-    Context <|-- Entry
+    ProcessContext <-- Entry
 
-    class Context{
+    class ProcessContext{
       String hostname
       String process
       String namespace 
@@ -155,11 +210,11 @@ classDiagram
 
 ## Log Context
 
-Log context is context carried around between functions. In Java this is known as Mapped Diagnostic Context. In Go, `context.Context`. Semantic logging has no opinion on this. It is just more key-value pairs.
+Log context is context carried around between functions. In Java this is known as Mapped Diagnostic Context. In Go `context.Context`. Semantic logging has no opinion on this. It is just more key-value pairs.
 
 ## Line Numbers
 
-Logs don't have meaningful line numbers. 
+Log files don't have meaningful line numbers. 
 
 ## Indexing
 
