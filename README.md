@@ -137,7 +137,7 @@ WIP
 Optional. Determining source/line can be very expensive unless added using macros at compile time.
 
 
-### `trace_id` and `span_id`
+#### `trace_id` and `span_id`
 
 Rather than logging thread or Corountine ID, log these.
 
