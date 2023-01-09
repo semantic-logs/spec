@@ -115,12 +115,6 @@ Messages should be from a small finite set of options. Messages should not be fo
 
 Mandatory.
 
-#### `thread`
-
-The thread or Coroutine.
-
-Optional.
-
 #### `error`
 
 It is common for `error` level entries to include the error itself. This allows output of more diagnostics, such as stack traces. In Java this would be a `Throwable` in Go an `error`. 
@@ -140,9 +134,13 @@ WIP
 
 Optional. Determining source/line can be very expensive unless added using macros at compile time.
 
-#### `logger`
 
-The name of the logger that created the entry.
+### `trace_id` and `span_id`
+
+Rather than logging thread or Corountine ID, log these.
+
+* `trace_id` The trace ID.
+* `span_id` The span ID.
 
 Optional.
 
@@ -155,15 +153,6 @@ The source of a request:
 * `audit.client_ip` The originating IP.
 * `audit.username` The user name requesting access.
 * `audit.resource` The resource being accessed.
-
-Optional.
-
-### OpenTracing
-
-WIP
-
-* `trace.trace_id` The trace ID.
-* `trace.span_id` The span ID.
 
 Optional.
 
@@ -223,3 +212,19 @@ Semantic logs entries are intended to be queried. As a result, logging facilitie
 ## Free-text Search
 
 Free-text may not need to be supported with semantic logs, because they're always structured.
+
+## Eschewed Fields
+
+The following field are eschewed:
+
+### `thread`
+
+The thread or Coroutine. 
+
+Rational: Uses trace instead. This covers more use cases.
+
+### `logger`
+
+The name of the logger that created the entry.
+
+Rational: `source` + `id` provide better diagnostics.
