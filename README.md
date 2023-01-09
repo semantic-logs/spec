@@ -39,13 +39,15 @@ classDiagram
 
 ## Types
 
-- Structured logs output only key-value pairs.
-- Entries are space separated. 
-- Entries are new line terminated
+- Log entries are key-value pairs.
+- Log lines are a space separated list of log entries. 
+- Log lines are-new line terminated.
 - Keys or values that contain spaces must be quoted.
-- Keys must be `string` type and should do not contain spaces.
+- Keys must be `string` type.
+- Keys should be lower-case.
+- Keys should not contain white-space.
 - Keys maybe grouped. Groups are dot-delimited prefix. E.g. `name.first`.
-- Values that contain new lines must be escaped.
+- Values that contain new lines will need to be escaped.
 - Values must be a printable type. 
   - Primitive types such as `string`, `number`, and `boolean`
   - `object` where the object has a printing method, e.g `toString()` in Java or `String()` in Go.
