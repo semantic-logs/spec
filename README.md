@@ -38,8 +38,9 @@ Mandatory:
 
 Optional keys:
 
-* `thread` The thread to Coroutine name.
+* `thread` The thread or Coroutine name.
 * `logger` The logger name.
+* `error` The error.
 
 ### `time`
 
@@ -83,7 +84,20 @@ Messages should be from a small finite set of options. Messages should not be fo
 
 `message` is a synonym.
 
+### `thread`
+
+TODO
+
+### `error`
+
+It is common for `error` level entries to include the error itself. This allows output of more diagnostics, such as stack traces. In Java this would be a `Throwable` in Go an `error`. 
+
+Stack-traces are typcially multi-line string.s
+
+`err` is a synonym.
+
 ## Extensions
+
 
 ### Audit
 
@@ -110,7 +124,7 @@ Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "info", 
 
 JSON is always more verbose than `logfmt`; 30% in the above example. 
 
-## Log Context
+## Process Context
 
 Logs are always created by a process and therefore never created without context:
 
@@ -139,9 +153,9 @@ classDiagram
 
 ```
 
-## Mapped Diagnostic Context
+## Log Context
 
-Semantic logging has no opinion on this. It is just more key-value pairs.
+Log context is context carried around between functions. In Java this is known as Mapped Diagnostic Context. In Go, `context.Context`. Semantic logging has no opinion on this. It is just more key-value pairs.
 
 ## Line Numbers
 
@@ -149,7 +163,7 @@ Logs don't have meaningful line numbers.
 
 ## Indexing
 
-TODO
+Semantic logs entries are intended to be queried. As a result, logging facilities may need to index log entries.
 
 ## Free-text Search
 
