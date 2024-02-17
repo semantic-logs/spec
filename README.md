@@ -2,7 +2,7 @@
 
 ## Summary 
 
-Today, there are many log encodings. This creates O(nm) cost and complexity parsing and processing log files. Every log encoding (n) multiplied by the number of log processing product (m).
+Today, there are many log encodings. This creates O(nm) cost and complexity parsing and processing log files. Every log encoding (n) multiplied by the number of log processing products (m).
 
 To manage this we introduce two concepts. Firstly, **structured logs** allows parsing of logs into general key-value entries. That allows both humans and machines to understand the **syntax** of log entries. Then a specialization of structured logs we call **semantic logs** gives clear meaning to key-values pairs that allows both humans and machine to perform unambiguous analysis and processing of generalised log entries. 
 
@@ -40,21 +40,16 @@ classDiagram
 ## Types
 
 - Log entries are key-value pairs.
-- Log lines are a space separated list of log entries. 
-- Log lines are-new line terminated.
-- Keys or values that contain spaces must be quoted.
 - Keys must be `string` type.
 - Keys should be lower-case.
-- Keys should not contain white-space.
+- Keys must not contain white-space.
 - Keys maybe grouped. Groups are dot-delimited prefix. E.g. `name.first`.
-- Values that contain new lines will need to be escaped.
 - Values must be a printable type. 
   - Primitive types such as `string`, `number`, and `boolean`
-  - `object` where the object has a printing method, e.g `toString()` in Java or `String()` in Go.
+  - `object` where the object has printable values.
   - `array` where the objects are printable.
-- Values cannot be `null`. It is not possible to differentiant a `string` from `null`.
 - Values that are dates must be in RCF339 format.
-- Values that are durations must be in seconds.
+- Values that are durations may be in seconds, milliseconds, or ISO 8601.
 
 ## Fields
 
@@ -81,7 +76,7 @@ One of:
 * `ERROR` The application has encountered an error. These errors should be reported to a human and the human should take action.
 * `WARN` A warning. Warning do not need to be raised with a human. 
 * `INFO` Informational.
-* `DEBUG` Debugging diagnotics. Typcially no logged in production systems. 
+* `DEBUG` Debugging diagnotics. Only for debugging. Do not need to be machine-readable. Typcially not logged in production systems, nor used for reporting purposes.
 
 How does this interact with `stdout` and `stderr`?
 
@@ -90,7 +85,7 @@ How does this interact with `stdout` and `stderr`?
 
 Non-standard levels:
 
-* `FATAL` An error message where the application exits with error status. Similar to `error` with error exit status.
+* `FATAL` An error message where the application exits with error status. Similar to `ERROR` with error exit status.
 * `WARNING` Synonym for `WARN`.
 * `NOTICE` Prefer `INFO`.
 * `TRACE` Prefer `DEBUG`. 
@@ -101,12 +96,9 @@ Mandatory.
 
 #### `msg`
 
-Human readble text. 
+Human-readble text. 
 
-Messages should be from a small finite set of options. Messages should not be formatted, because that would allow infinite messages.
-
-* Discouraged: `time=2022-12-10T14:15:00Z level=INFO msg="Hello harry123"`
-* Encouraged: `time=2022-12-10T14:15:00Z level=INFO msg="Hello" userid=harry123`
+Messages should be from a small finite set of options. The number of possible messages an application logs at >= `WARN` should be finite, so that aggregate reports can be generated (e.g. `stats count by msg`).
 
 `message` is a synonym.
 
@@ -124,13 +116,16 @@ Optional.
 
 #### `source` & `line`
 
-WIP
-
 * `source` The source file that created the log entry.
-* `line` The number within the source file that created the log entry. Must be an integer.
+* `line` The number within the source file that created the log entry. Must be an integer greater than zero.
 
 Optional. Determining source/line can be very expensive unless added using macros at compile time.
 
+#### `tid`
+
+The transaction ID. A string.
+
+Optional.
 
 #### `trace_id` and `span_id`
 
@@ -224,4 +219,4 @@ Rational: Uses trace instead. This covers more use cases.
 
 The name of the logger that created the entry.
 
-Rational: `source` + `id` provide better diagnostics.
+Rational: `source` + `line` provide better diagnostics.
