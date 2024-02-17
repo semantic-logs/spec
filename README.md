@@ -116,7 +116,7 @@ Human-readble text.
 
 Messages should be from a small finite set of options. The number of possible messages an application logs at >= `WARN` should be finite, so that aggregate reports can be generated (e.g. `stats count by msg`).
 
-Message is the **only** field which may be a multi-line string.
+Message is the **only** field which should be a multi-line string. 
 
 `message` is a synonym.
 
@@ -239,6 +239,7 @@ Notes:
 
 * Human-readable.
 * Most compact human-readable encoding possible.
+* Multi-line string should only appear in the message field. If they appear in any other field, then they must be escaped. 
 
 Logfmt entries are one ore more lines long. A line is grouped with the previous line when any mandatory field is missing. The extra lines are appended with their leading new line to the message field
 
@@ -254,4 +255,4 @@ Printed as JSON stream, e.g. `{"time": "2022-12-10T14:15:00Z", "level": "INFO", 
 Notes:
 
 * JSON is always more verbose than Logfmt, between 10% and 30%
-* Easier to write parsers and printers for JSON as the JSON libraries are typcially well-tested and will deal with escaping. 
+* Easier to write parsers and printers for JSON as the JSON libraries are typcially well-tested and will deal with escaping.
