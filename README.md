@@ -6,12 +6,13 @@ Today, there are many log encodings. This creates O(nm) cost and complexity pars
 
 To manage this we introduce two concepts. Firstly, **structured logs** allows parsing of logs into general key-value entries. That allows both humans and machines to understand the **syntax** of log entries. Then a specialization of structured logs we call **semantic logs** gives clear meaning to key-values pairs that allows both humans and machine to perform unambiguous analysis and processing of generalised log entries. 
 
-By standardising, it becomes orders of magnitude easier to build tools for common use cases:
+By standardising, it becomes straight forward to build tools for common use cases:
 
 * Log viewing
 * Log analytics
 * Distributed tracing
 * Auditting
+* Reporting
 * Security analysis
 
 Structured logs are logs where each entry has context-free syntax. A counter example would be a CSV file. Fields within records within a CSV file can only be understood within the context of the headers. Conversely, JSON object values can be understood by examining the keys. 
